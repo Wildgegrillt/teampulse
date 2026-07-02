@@ -1,5 +1,7 @@
 # TeamPulse – Handball verbindet
 
+**▶️ App direkt öffnen & installieren: https://wildgegrillt.github.io/teampulse/**
+
 Interaktive App zur Projektarbeit: Sie zeigt Kindern und Eltern spielerisch den
 **sozialen Wert von Handball** – Pässe, Vertrauen und Teamgeist als leuchtende
 Verbindungen. Umgesetzt als **installierbare PWA** (Progressive Web App).
