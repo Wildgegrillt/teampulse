@@ -1,0 +1,19 @@
+{
+  "name": "TeamPulse – Handball verbindet",
+  "short_name": "TeamPulse",
+  "description": "Handball verbindet: zeigt Kindern und Eltern spielerisch den sozialen Wert von Handball – Pässe, Vertrauen und Teamgeist als leuchtende Verbindungen.",
+  "lang": "de",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eafff1",
+  "theme_color": "#bcd6ff",
+  "categories": ["education", "sports", "kids"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

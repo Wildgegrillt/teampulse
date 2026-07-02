@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="34%" cy="28%" r="95%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="55%" stop-color="#12264d"/>
+      <stop offset="100%" stop-color="#0a1122"/>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- leuchtende Verbindungslinien (Kern-Symbol der App) -->
+  <g stroke="#7dd3fc" stroke-width="8" stroke-linecap="round" opacity="0.9" filter="url(#glow)">
+    <line x1="256" y1="256" x2="150" y2="152"/>
+    <line x1="256" y1="256" x2="262" y2="112"/>
+    <line x1="256" y1="256" x2="372" y2="168"/>
+    <line x1="256" y1="256" x2="168" y2="356"/>
+    <line x1="256" y1="256" x2="356" y2="342"/>
+    <line x1="150" y1="152" x2="262" y2="112"/>
+    <line x1="372" y1="168" x2="356" y2="342"/>
+    <line x1="150" y1="152" x2="168" y2="356"/>
+  </g>
+
+  <!-- Spieler-Knoten -->
+  <g filter="url(#glow)" stroke="#ffffff" stroke-width="6">
+    <circle cx="150" cy="152" r="30" fill="#60a5fa"/>
+    <circle cx="262" cy="112" r="26" fill="#22c55e"/>
+    <circle cx="372" cy="168" r="30" fill="#60a5fa"/>
+    <circle cx="168" cy="356" r="28" fill="#22c55e"/>
+    <circle cx="356" cy="342" r="30" fill="#f97316"/>
+  </g>
+
+  <!-- Ballträger in der Mitte -->
+  <circle cx="256" cy="256" r="52" fill="#f97316" stroke="#ffffff" stroke-width="8" filter="url(#glow)"/>
+  <path d="M256 208 A48 48 0 0 1 256 304" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.55"/>
+  <path d="M208 256 A48 48 0 0 1 304 256" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.55"/>
+</svg>
