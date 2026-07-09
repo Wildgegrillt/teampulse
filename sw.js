@@ -1,5 +1,5 @@
 /* TeamPulse Service Worker – Seite network-first (immer aktuell), Assets aus dem Cache, offline-fähig */
-const CACHE = 'teampulse-v6';
+const CACHE = 'teampulse-v7';
 const ASSETS = [
   './',
   './index.html',
