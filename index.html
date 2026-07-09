@@ -120,13 +120,46 @@
   .pos{font-size:12.5px;color:var(--ink2);line-height:1.4;background:var(--glass);border:1px solid var(--glass-b);border-radius:12px;padding:9px 12px;box-shadow:var(--shadow)}
   .pos i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle}
   .pos b{color:var(--ink)}
+  #s-splash{padding:0}
+  #splashSvg{flex:1;width:100%;cursor:pointer}
+  .login-wrap{display:none;flex-direction:column;gap:12px;margin-top:14px}
+  .login-wrap.show{display:flex}
+  .inp{width:100%;padding:15px 16px;border-radius:16px;border:1px solid var(--glass-b);background:var(--glass);
+    font-size:16px;font-weight:600;color:var(--ink);outline:none;box-shadow:var(--shadow);font-family:inherit}
+  .inp:focus{border-color:var(--blue)}
+  .inp::placeholder{color:#8ba3bd;font-weight:400}
 </style>
 </head>
 <body>
 <div class="phone"><div class="notch"></div>
 
+  <!-- 0. LADESCREEN: die reine Taktiktafel -->
+  <section class="screen active" id="s-splash">
+    <svg id="splashSvg" viewBox="0 0 390 800" preserveAspectRatio="xMidYMid slice"></svg>
+  </section>
+
+  <!-- 0b. ANMELDUNG -->
+  <section class="screen" id="s-login">
+    <div class="brand" style="margin-top:36px"><span class="logo-dot"></span><h1>TeamPulse</h1></div>
+    <p class="sub">Handball verbindet</p>
+    <div class="login-wrap show" id="loginNew">
+      <span class="kicker" style="margin-top:26px">Willkommen</span>
+      <h2>Wie heißt du?</h2>
+      <input class="inp" id="loginName" maxlength="20" placeholder="Dein Name" autocomplete="off">
+      <button class="btn btn-orange" onclick="loginSubmit()"><span class="emoji">🤾</span> Los geht's!</button>
+      <button class="btn btn-ghost" onclick="go('s-start')">Ohne Anmeldung weiter</button>
+    </div>
+    <div class="login-wrap" id="loginBack">
+      <span class="kicker" style="margin-top:26px">Willkommen zurück</span>
+      <h2 id="loginBackName"></h2>
+      <button class="btn btn-blau" onclick="go('s-start')"><span class="emoji">👋</span> Weiter</button>
+      <button class="btn btn-ghost" onclick="switchPlayer()">Anderer Spieler</button>
+    </div>
+    <div class="footnote">Dein Name wird nur auf diesem Gerät gespeichert.</div>
+  </section>
+
   <!-- 1. START -->
-  <section class="screen active" id="s-start">
+  <section class="screen" id="s-start">
     <div class="brand"><span class="logo-dot"></span><h1>TeamPulse</h1></div>
     <p class="sub"><b class="grad" style="font-size:16px">Emotionen &amp; Teamgeist</b> · Handball verbindet</p>
     <div class="field-wrap"><svg id="startField" viewBox="0 0 346 240" width="100%"></svg></div>
@@ -134,7 +167,7 @@
       und jede <b>Bewegung</b> verbindet das Team."</div>
     <button class="btn btn-orange" style="margin-bottom:12px" onclick="go('s-kids-home')"><span class="emoji">🧒</span> Ich bin ein Kind</button>
     <button class="btn btn-blau" onclick="go('s-parent-home')"><span class="emoji">👨‍👩‍👧</span> Ich bin ein Elternteil</button>
-    <div class="footnote">Projektarbeit · Handball zeigt, wie stark ein Team sein kann. · Version 6</div>
+    <div class="footnote">Projektarbeit · Handball zeigt, wie stark ein Team sein kann. · Version 8</div>
   </section>
 
   <!-- KINDER-HOME -->
@@ -360,14 +393,64 @@ function player(svg,p,label,color,o={}){const g=el('g',{});if(o.id)g.setAttribut
   if(o.onClick){g.style.cursor='pointer';g.addEventListener('click',o.onClick);}
   svg.appendChild(g);return g;}
 
+/* 0. Ladescreen: die reine Taktiktafel (Hochformat, beide Tore) – Maßstab 16 px = 1 m */
+function drawSplash(){const svg=$('splashSvg');svg.innerHTML='';const W2=390,H2=800,L=C.line;
+  const defs=el('defs',{});const wg=el('linearGradient',{id:'wd_splash',x1:'0',y1:'0',x2:'0.9',y2:'1'});
+  [['0','#ecceA0'],['0.5','#dcb27c'],['1','#cc9d64']].forEach(([o,c])=>wg.appendChild(el('stop',{offset:o,'stop-color':c})));
+  defs.appendChild(wg);
+  const clip=el('clipPath',{id:'cp_splash'});clip.appendChild(el('rect',{x:35,y:80,width:320,height:640}));defs.appendChild(clip);
+  svg.appendChild(defs);
+  svg.appendChild(el('rect',{x:0,y:0,width:W2,height:H2,fill:'#141414'}));                       // Rahmen
+  svg.appendChild(el('rect',{x:8,y:42,width:W2-16,height:H2-84,rx:10,fill:'url(#wd_splash)'}));    // Parkett
+  for(let x=20;x<W2-10;x+=22)svg.appendChild(el('line',{x1:x,y1:42,x2:x,y2:H2-42,stroke:'rgba(120,80,40,.16)','stroke-width':1}));
+  redtab(svg,16,13,80,'HEIM');redtab(svg,W2-96,13,80,'GAST');                                      // Kopfleiste
+  svg.appendChild(ctxt(W2/2,28,'TAKTIKTAFEL','#ffffff',12));
+  svg.appendChild(el('rect',{x:8,y:H2-34,width:W2-16,height:24,rx:12,fill:'rgba(255,255,255,.92)'})); // Wechselbank
+  svg.appendChild(ctxt(52,H2-17,'WECHSEL','#333',9,'start'));
+  svg.appendChild(el('rect',{x:W2-124,y:H2-27,width:74,height:8,rx:4,fill:'#222'}));               // Stift
+  svg.appendChild(el('rect',{x:35,y:80,width:320,height:640,fill:'none',stroke:L,'stroke-width':2})); // Außenlinien
+  svg.appendChild(el('line',{x1:35,y1:400,x2:355,y2:400,stroke:L,'stroke-width':2.4}));            // Mittellinie
+  const g=el('g',{'clip-path':'url(#cp_splash)'});                                                  // 6m & 9m beidseitig
+  g.appendChild(el('path',{d:'M 27 80 A 144 144 0 0 0 171 224 L 219 224 A 144 144 0 0 0 363 80',fill:'none',stroke:L,'stroke-width':1.8,'stroke-dasharray':'6 8'}));
+  g.appendChild(el('path',{d:'M 75 80 A 96 96 0 0 0 171 176 L 219 176 A 96 96 0 0 0 315 80',fill:'none',stroke:L,'stroke-width':2.4}));
+  g.appendChild(el('path',{d:'M 27 720 A 144 144 0 0 1 171 576 L 219 576 A 144 144 0 0 1 363 720',fill:'none',stroke:L,'stroke-width':1.8,'stroke-dasharray':'6 8'}));
+  g.appendChild(el('path',{d:'M 75 720 A 96 96 0 0 1 171 624 L 219 624 A 96 96 0 0 1 315 720',fill:'none',stroke:L,'stroke-width':2.4}));
+  svg.appendChild(g);
+  [[192,187,203],[608,187,203]].forEach(([y,x1,x2])=>svg.appendChild(el('line',{x1,y1:y,x2,y2:y,stroke:L,'stroke-width':2.4}))); // 7m
+  [[144],[656]].forEach(([y])=>svg.appendChild(el('line',{x1:190,y1:y,x2:200,y2:y,stroke:L,'stroke-width':2})));                 // 4m
+  [[64,80],[720,720]].forEach(([ry,ly])=>{svg.appendChild(el('rect',{x:171,y:ry,width:48,height:16,fill:'rgba(255,255,255,.55)',stroke:'#c0392b','stroke-width':2}));
+    svg.appendChild(el('line',{x1:171,y1:ly,x2:219,y2:ly,stroke:'#c0392b','stroke-width':4}));});   // Tore
+  svg.appendChild(el('circle',{cx:88,cy:352,r:9,fill:C.orange,filter:'drop-shadow(0 0 8px '+C.orange+')'}));
+  const tp=el('text',{x:108,y:366,'font-size':40,'font-weight':800,fill:'#ffffff','font-family':'Segoe UI,sans-serif',
+    filter:'drop-shadow(0 2px 6px rgba(0,0,0,.5))'});tp.textContent='TeamPulse';svg.appendChild(tp); // Schriftzug
+  const st=ctxt(195,438,'Handball verbindet','#ffffff',15);st.setAttribute('filter','drop-shadow(0 1px 3px rgba(0,0,0,.5))');svg.appendChild(st);
+  svg.appendChild(ctxt(195,472,'wird geladen ...','rgba(255,255,255,.85)',11));
+  const ball=el('circle',{cy:400,r:11,fill:'#f4b41a',stroke:'#7a4a10','stroke-width':2,
+    filter:'drop-shadow(0 0 8px rgba(244,180,26,.8))'});                                            // Ball als Ladeanzeige
+  ball.appendChild(el('animate',{attributeName:'cx',values:'70;320;70',dur:'2.2s',repeatCount:'indefinite'}));
+  svg.appendChild(ball);}
+let splashTimer=null;
+function startSplash(){drawSplash();clearTimeout(splashTimer);
+  splashTimer=setTimeout(()=>{if(current==='s-splash')go('s-login');},2600);}
+
+/* 0b. Anmeldung (lokal, ohne Server) */
+function renderLogin(){const known=profile.name&&profile.name!=='Mein Team-Star';
+  $('loginNew').classList.toggle('show',!known);$('loginBack').classList.toggle('show',known);
+  if(known)$('loginBackName').textContent='Hallo, '+profile.name+'!';}
+function loginSubmit(){const v=$('loginName').value.trim();if(!v){$('loginName').focus();return;}
+  profile.name=v.slice(0,20);saveProfile();go('s-start');}
+function switchPlayer(){$('loginBack').classList.remove('show');$('loginNew').classList.add('show');
+  $('loginName').value='';$('loginName').focus();}
+
 /* Router */
-let current='s-start';const navMap={'s-kids-home':'home','s-play':'play','s-seconds':'sec','s-network':'net','s-profile':'prof'};
+let current='s-splash';const navMap={'s-kids-home':'home','s-play':'play','s-seconds':'sec','s-network':'net','s-profile':'prof'};
 function go(id){cancelAnimationFrame(play.raf);play.decided=true;clearInterval(secTimer);
   $(current).classList.remove('active');$(id).classList.add('active');current=id;$(id).scrollTop=0;
   const nav=$('nav');navMap[id]?(nav.classList.add('show'),
     document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.nav===navMap[id])))
     :nav.classList.remove('show');
-  if(id==='s-seconds')startSeconds();if(id==='s-network')renderNet();if(id==='s-profile')renderProfile();}
+  if(id==='s-seconds')startSeconds();if(id==='s-network')renderNet();if(id==='s-profile')renderProfile();
+  if(id==='s-login')renderLogin();}
 
 /* Start-Feld */
 function initStart(){const svg=$('startField');drawField(svg,346,240);
@@ -375,7 +458,10 @@ function initStart(){const svg=$('startField');drawField(svg,346,240);
   [[0,1],[1,2],[1,3],[3,4],[1,4],[0,5],[3,5]].forEach((pr,i)=>connect(svg,pts[pr[0]],pts[pr[1]],i%2?C.gruen:C.blau,i*160));
   const col=[C.blau,C.orange,C.gruen,C.blau,C.orange,C.gruen];
   pts.forEach((p,i)=>player(svg,p,i+1,col[i],{glow:true,pulse:i===1}));
-  $('playField').addEventListener('pointerdown',onPlayTap);}
+  $('playField').addEventListener('pointerdown',onPlayTap);
+  $('splashSvg').addEventListener('pointerdown',()=>{if(current==='s-splash'){clearTimeout(splashTimer);go('s-login');}});
+  $('loginName').addEventListener('keydown',e=>{if(e.key==='Enter')loginSubmit();});
+  startSplash();}
 
 /* 2. SPIEL — Bewegung + geometrische Bewertung */
 const SIT=[
